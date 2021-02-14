@@ -21,34 +21,51 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Personal Expenses',
-      theme: ThemeData(
-        primarySwatch: Colors.purple,
-        accentColor: Colors.amber,
-        fontFamily: 'Quicksand',
-        textTheme: ThemeData.light().textTheme.copyWith(
-              headline6: TextStyle(
-                fontFamily: 'OpenSans',
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-              button: TextStyle(
-                color: Colors.white,
-              ),
-            ),
-        appBarTheme: AppBarTheme(
-          textTheme: ThemeData.light().textTheme.copyWith(
-                headline6: TextStyle(
+    return Platform.isIOS
+        ? CupertinoApp(
+            title: 'Personal Expenses',
+            theme: CupertinoThemeData(
+              primaryColor: Colors.purple,
+              primaryContrastingColor: Colors.amber,
+              // fontFamily: 'Quicksand',
+              textTheme: CupertinoTextThemeData(
+                textStyle: TextStyle(
                   fontFamily: 'OpenSans',
-                  fontSize: 20,
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-        ),
-      ),
-      home: MyHomePage(),
-    );
+            ),
+            home: MyHomePage(),
+          )
+        : MaterialApp(
+            title: 'Personal Expenses',
+            theme: ThemeData(
+              primarySwatch: Colors.purple,
+              accentColor: Colors.amber,
+              fontFamily: 'Quicksand',
+              textTheme: ThemeData.light().textTheme.copyWith(
+                    headline6: TextStyle(
+                      fontFamily: 'OpenSans',
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    button: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+              appBarTheme: AppBarTheme(
+                textTheme: ThemeData.light().textTheme.copyWith(
+                      headline6: TextStyle(
+                        fontFamily: 'OpenSans',
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+              ),
+            ),
+            home: MyHomePage(),
+          );
   }
 }
 
@@ -110,43 +127,45 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           );
 
-    final pageBody = SingleChildScrollView(
-      child: Column(
-        children: <Widget>[
-          if (isLandscape)
-            Container(
-              height: this._getHeight(appBar) * 0.15,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Show Chart'),
-                  Switch.adaptive(
-                    value: this._showChart,
-                    activeColor: Theme.of(context).accentColor,
-                    onChanged: (value) {
-                      setState(() {
-                        this._showChart = value;
-                      });
-                    },
-                  )
-                ],
+    final pageBody = SafeArea(
+      child: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            if (isLandscape)
+              Container(
+                height: this._getHeight(appBar) * 0.15,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Show Chart'),
+                    Switch.adaptive(
+                      value: this._showChart,
+                      activeColor: Theme.of(context).accentColor,
+                      onChanged: (value) {
+                        setState(() {
+                          this._showChart = value;
+                        });
+                      },
+                    )
+                  ],
+                ),
               ),
-            ),
-          if (isLandscape)
-            this._showChart
-                ? Container(
-                    height: this._getHeight(appBar) * 0.6,
-                    child: Chart(this._recentTransactions),
-                  )
-                : this._getTransactionList(appBar, 0.85),
-          if (!isLandscape)
-            Container(
-              height: this._getHeight(appBar) * 0.3,
-              child: Chart(this._recentTransactions),
-            ),
-          if (!isLandscape) this._getTransactionList(appBar, 0.7),
-        ],
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+            if (isLandscape)
+              this._showChart
+                  ? Container(
+                      height: this._getHeight(appBar) * 0.6,
+                      child: Chart(this._recentTransactions),
+                    )
+                  : this._getTransactionList(appBar, 0.85),
+            if (!isLandscape)
+              Container(
+                height: this._getHeight(appBar) * 0.3,
+                child: Chart(this._recentTransactions),
+              ),
+            if (!isLandscape) this._getTransactionList(appBar, 0.7),
+          ],
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+        ),
       ),
     );
 
